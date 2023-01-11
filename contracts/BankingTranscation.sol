@@ -9,21 +9,26 @@ pragma solidity ^0.8.8;
    send_to
    View_deposited amount
 */
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "./PriceConverter.sol";
+
 contract BankingAmount{
+    using PriceConverter for uint256;
     address public contractOwner;
     struct Custmers{
         address CustmerAddress;
         uint256 amount;
     }
-    constructor(){
+    AggregatorV3Interface public PriceFeed;
+    constructor(address PriceFeedAddress){
        contractOwner= msg.sender;
+       PriceFeed=AggregatorV3Interface(PriceFeedAddress);
     }
     Custmers[] public people;
     mapping(address => uint256) public Balance;
-
     function payment() public payable{
-        people.push(Custmers(msg.sender,msg.value));
-        Balance[msg.sender]= Balance[msg.sender]+ msg.value;
+        people.push(Custmers(msg.sender,msg.value.getConversionRate(PriceFeed)));
+        Balance[msg.sender]= Balance[msg.sender]+ msg.value.getConversionRate(PriceFeed);
     }
     function ViewAmount(address USER_ADDRESS) public view returns(uint256){
         return Balance[USER_ADDRESS];
