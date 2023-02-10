@@ -1,3 +1,4 @@
+// const { getContractAddress } = require("ethers/lib/utils")
 const { network, run } = require("hardhat")
 require("dotenv").config()
 
@@ -5,19 +6,27 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts()
     const { deploy, log } = deployments
     const chainId = network.config.chainId
-    if (chainId === 5 && process.env.GOERLI_PRICEFEED_URL) {
-        const BankingTransaction = await deploy("BankingAmount", {
-            from: deployer,
-            log: true,
-            args: [process.env.GOERLI_PRICEFEED_URL]
-        }
-        )
-        await verify(BankingTransaction.address, [process.env.GOERLI_PRICEFEED_URL])
+
+    let priceFeedAddress, interval;
+    if (chainId === 31337) {
+        const hardhat = await deployments.get("MockV3Aggregator");
+        priceFeedAddress = hardhat.address;
     }
-    // if (chainId === 5) {
-    //     await verify(BankingTransaction.address, [])
-    // }
+    else {
+        priceFeedAddress = process.env.GOERLI_PRICEFEED_URL
+    }
+    interval = 10;
+    const BankingTransaction = await deploy("BankingAmount", {
+        from: deployer,
+        log: true,
+        args: [priceFeedAddress, interval]
+    }
+    )
+    if (chainId === 5 && process.env.GOERLI_PRICEFEED_URL) {
+        await verify(BankingTransaction.address, [process.env.GOERLI_PRICEFEED_URL, interval])
+    }
 }
+
 const verify = async (contractAddress, args) => {
     console.log("Verifying contract...")
     try {
@@ -34,3 +43,4 @@ const verify = async (contractAddress, args) => {
     }
 }
 
+module.exports.tags = ['all', 'BankingAmount'];
