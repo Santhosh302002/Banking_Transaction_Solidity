@@ -28,6 +28,11 @@ contract BankingAmount is AutomationCompatibleInterface {
     address public contractOwner;
     uint256 public immutable i_interval;
     uint256 public lastTimeStamp;
+    uint256 public loanIndex;
+    uint256 public i=0;
+    uint256 public loanCount=0;
+    uint256 public currentTime=0;
+    bool public up;
     
     struct Custmers {
         address CustmerAddress;
@@ -37,7 +42,9 @@ contract BankingAmount is AutomationCompatibleInterface {
     struct peopleLoanDetails{
         address CustmerAddress;
         uint256 loanAmount;
+        uint256 timestampLoan;
         bool loanStatus;
+        bool blockStatus;  //true==blocked false ==not blocked
     }
     struct BlockedListPeople {
         address blockedAddress;
@@ -107,14 +114,16 @@ contract BankingAmount is AutomationCompatibleInterface {
     function LOAN(uint256 RequestedLoanValue) public {
         // if (BankTotalMoney > RequestedLoanValue.getConversionRate(PriceFeed))
         //     revert InsufficientBalance();
+        // if(address(this).balance<)
         if(blockedPeople[msg.sender]!=0) revert Blocked();
         address withdraw = msg.sender;
         payable(withdraw).transfer(RequestedLoanValue);
+        loanCount=loanCount+1;
         BankTotalMoney = BankTotalMoney - RequestedLoanValue;
-        peopleLoan.push(peopleLoanDetails(msg.sender,RequestedLoanValue,false));
+        lastTimeStamp=block.timestamp;
+        peopleLoan.push(peopleLoanDetails(msg.sender,RequestedLoanValue,lastTimeStamp,false,false));
         loanMapping[msg.sender]=false;
         loanAmountMapping[msg.sender]=RequestedLoanValue;
-        lastTimeStamp=block.timestamp;
         status=loan.ON;
         checkUpkeep("");
     }
@@ -130,16 +139,32 @@ contract BankingAmount is AutomationCompatibleInterface {
         bytes memory /*checkData*/
     ) public override returns (bool upkeepNeeded, bytes memory /*performData*/) {
         if(status == loan.OFF) revert NotProvdingLoan();
-        upkeepNeeded = (((block.timestamp - lastTimeStamp) > i_interval) && !peopleLoan[peopleLoan.length-1].loanStatus);
+        // for(uint256 i=0;i<=peopleLoan.length-1;i++)
+            loanIndex=i;
+            currentTime=block.timestamp;
+            if(peopleLoan[i].blockStatus==true || peopleLoan[i].loanStatus ==true){
+                i++;
+                loanIndex++;
+            }
+            upkeepNeeded = (
+                ((block.timestamp - peopleLoan[i].timestampLoan) > i_interval)
+                && !peopleLoan[i].loanStatus 
+                && !peopleLoan[i].blockStatus
+            );
+            up=upkeepNeeded;
+            return (upkeepNeeded, "0x0");
+        
     }
 
     function performUpkeep(bytes calldata performData) external override {
         //  (((block.timestamp - lastTimeStamp) > i_interval) && !peopleLoan[peopleLoan.length-1].loanStatus);
         blockedpeople.push(BlockedListPeople(
-            peopleLoan[peopleLoan.length-1].CustmerAddress,
-            peopleLoan[peopleLoan.length-1].loanAmount)
+            peopleLoan[loanIndex].CustmerAddress,
+            peopleLoan[loanIndex].loanAmount)
         );
-        blockedPeople[peopleLoan[peopleLoan.length-1].CustmerAddress]=peopleLoan[peopleLoan.length-1].loanAmount;
+        peopleLoan[loanIndex].blockStatus=true;
+        blockedPeople[peopleLoan[loanIndex].CustmerAddress]=peopleLoan[loanIndex].loanAmount;
+        // status=loan.OFF;
         // if(Balance[peopleLoan[peopleLoan.length-1].CustmerAddress]!=0){
             
         // }
