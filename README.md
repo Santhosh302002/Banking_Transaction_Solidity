@@ -13,5 +13,6 @@ Try running some of the following tasks:
    View_deposited amount
    loan: will be given with a specific time duration if loan is not payed your banked account will be blocked
 
-   Contract address:https://goerli.etherscan.io/address/0x996Ba875A27f61b296CadcA3f887EdbDeCab675a#readContract
+   Contract address:0x996Ba875A27f61b296CadcA3f887EdbDeCab675a
+   https://goerli.etherscan.io/address/0x996Ba875A27f61b296CadcA3f887EdbDeCab675a
 ```
