@@ -6,6 +6,7 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts()
     const { deploy, log } = deployments
     const chainId = network.config.chainId
+    // console.log(chainId);
 
     let priceFeedAddress, interval;
     if (chainId === 31337) {
@@ -13,7 +14,12 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
         priceFeedAddress = hardhat.address;
     }
     else {
-        priceFeedAddress = process.env.GOERLI_PRICEFEED_URL
+        // if (chainId === 11155111) {
+        priceFeedAddress = process.env.SEPOLIA_PRICEFEED_URL
+        // }
+        // if (chainId === 5) {
+        //     priceFeedAddress = process.env.GOERLI_PRICEFEED_URL
+        // }
     }
     interval = 600;
     const BankingTransaction = await deploy("BankingAmount", {
@@ -24,6 +30,9 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
     )
     if (chainId === 5 && process.env.GOERLI_PRICEFEED_URL) {
         await verify(BankingTransaction.address, [process.env.GOERLI_PRICEFEED_URL, interval])
+    }
+    if (chainId === 11155111 && process.env.SEPOLIR_PRICEFEED_URL) {
+        await verify(BankingTransaction.address, [process.env.SEPOLIA_PRICEFEED_URL, interval])
     }
 }
 

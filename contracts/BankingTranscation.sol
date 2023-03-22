@@ -118,7 +118,7 @@ contract BankingAmount is AutomationCompatibleInterface {
         if(blockedPeople[msg.sender]!=0) revert Blocked();
         address withdraw = msg.sender;
         payable(withdraw).transfer(RequestedLoanValue);
-        loanCount=loanCount+1;
+        loanCount=loanCount+1;//
         BankTotalMoney = BankTotalMoney - RequestedLoanValue;
         lastTimeStamp=block.timestamp;
         peopleLoan.push(peopleLoanDetails(msg.sender,RequestedLoanValue,lastTimeStamp,false,false));
@@ -138,6 +138,7 @@ contract BankingAmount is AutomationCompatibleInterface {
     function checkUpkeep(
         bytes memory /*checkData*/
     ) public override returns (bool upkeepNeeded, bytes memory /*performData*/) {
+        // loanCount=loanCount+1; 
         if(status == loan.OFF) revert NotProvdingLoan();
         // for(uint256 i=0;i<=peopleLoan.length-1;i++)
             loanIndex=i;
@@ -164,9 +165,5 @@ contract BankingAmount is AutomationCompatibleInterface {
         );
         peopleLoan[loanIndex].blockStatus=true;
         blockedPeople[peopleLoan[loanIndex].CustmerAddress]=peopleLoan[loanIndex].loanAmount;
-        // status=loan.OFF;
-        // if(Balance[peopleLoan[peopleLoan.length-1].CustmerAddress]!=0){
-            
-        // }
     }
 }
