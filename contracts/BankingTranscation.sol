@@ -50,10 +50,11 @@ contract BankingAmount is AutomationCompatibleInterface {
         address blockedAddress;
         uint256 remainingAmount;
     }
+
     enum loan {ON,OFF}
     
     loan public status;
-    
+
     AggregatorV3Interface public PriceFeed;
     
     constructor(address PriceFeedAddress,uint256 interval) {
@@ -75,6 +76,7 @@ contract BankingAmount is AutomationCompatibleInterface {
 
 
     function payment() public payable {
+        // payable(address(this)).send(amount);
         people.push(
             Custmers(msg.sender, msg.value.getConversionRate(PriceFeed))
         );

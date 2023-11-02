@@ -1,7 +1,7 @@
 import Head from "next/head";
 // import styles from "../styles/Home.module.css";
 import Header from "../components/Header";
-// import CreateNFT from "../components/CreateNFT"
+import Bank from "../components/Bank"
 import { useMoralis } from "react-moralis";
 
 const supportedChains = ["31337", "11155111", "43113"]
@@ -22,7 +22,7 @@ export default function Home() {
                 <div>
                     {supportedChains.includes(parseInt(chainId).toString()) ? (
                         <div >
-                            {/* <CreateNFT /> */}
+                            <Bank />
                         </div>
                     ) : (
                         <div>{`Please switch to a supported chainId. The supported Chain Ids are: ${supportedChains}`}</div>

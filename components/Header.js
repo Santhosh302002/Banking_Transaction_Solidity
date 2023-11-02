@@ -3,7 +3,7 @@ import { ConnectButton } from "web3uikit"
 
 export default function Header() {
     return (
-        <nav >
+        <nav style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
             <h1 > Banking Dapp </h1>
             <div className="ml-auto py-2 px-4">
                 <ConnectButton moralisAuth={false} />
