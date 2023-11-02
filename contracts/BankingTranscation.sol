@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT LICENSED
-pragma solidity ^0.8.8;
+pragma solidity ^0.8.7;
 
 /* This contract is about sending your ETH to the BANK(contract) and retieve when you need or 
    you can send to someone
@@ -53,6 +53,7 @@ contract BankingAmount is AutomationCompatibleInterface {
     enum loan {ON,OFF}
     
     loan public status;
+    
     AggregatorV3Interface public PriceFeed;
     
     constructor(address PriceFeedAddress,uint256 interval) {

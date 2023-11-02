@@ -1,4 +1,24 @@
 {
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.3",
+    "@openzeppelin/contracts": "^4.9.2",
+    "console": "^0.7.2",
+    "hardhat": "^2.16.1",
+    "moralis": "1.8.0",
+    "moralis-v1": "1.11.0",
+    "next": "^13.4.7",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-helmet": "^6.1.0",
+    "react-moralis": "1.4.2",
+    "web3uikit": "0.1.159"
+  },
   "devDependencies": {
     "@chainlink/contracts": "^0.5.1",
     "@ethersproject/abi": "^5.4.7",
@@ -10,6 +30,7 @@
     "@nomiclabs/hardhat-etherscan": "^3.1.4",
     "@typechain/ethers-v5": "^10.1.0",
     "@typechain/hardhat": "^6.1.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.6",
     "chai": "^4.2.0",
     "deploy": "^1.0.3",
     "dotenv": "^16.0.3",
