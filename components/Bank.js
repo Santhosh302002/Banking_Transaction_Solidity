@@ -43,12 +43,27 @@ export default function Bank() {
         params: { to_receiever: Transfer, value: Transfermoney }
     })
 
+    const {
+        runContractFunction: ViewAmount,
+    } = useWeb3Contract({
+        abi: abi,
+        contractAddress: DappAddress,
+        functionName: "ViewAmount",
+        params: { to_receiever: Transfer, value: Transfermoney }
+    })
 
 
     async function updateUIValues() {
         // const web3 = await Moralis.enableWeb3();
         // console.log(money)
         // console.log(paymentMoney)
+        const bal = await ViewAmount(
+            {
+                onSuccess: handleSuccess,
+                onError: (error) => console.log(error),
+            }
+        )
+        setbalance(bal.toString())
     }
 
     useEffect(() => {
@@ -84,6 +99,10 @@ export default function Bank() {
 
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px' }}>
+                <div>
+                    Balance:
+                    {balance}
+                </div>
                 <input
                     type="number"
                     placeholder="Enter a number"

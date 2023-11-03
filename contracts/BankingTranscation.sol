@@ -86,12 +86,6 @@ contract BankingAmount is AutomationCompatibleInterface {
         BankTotalMoney = Balance[msg.sender];
     }
 
-    function ViewAmount() public view returns (uint256) {
-        return Balance[msg.sender];
-    }
-    function BankTotalAmount() public view returns(uint256){
-        return address(this).balance;
-    }
 
     function send_from_BankAccount(address payable to_receiever,uint256 value) public {
         address from_user = msg.sender;
@@ -134,6 +128,7 @@ contract BankingAmount is AutomationCompatibleInterface {
     function PayLoan() public payable{
         if(loanMapping[msg.sender]!=false) revert YouHavePayedLoan();  
         payable(i_OwnerAddress).transfer(loanAmountMapping[msg.sender]);
+        loanAmountMapping[msg.sender]=0;
         loanMapping[msg.sender]=true;
         peopleLoan[peopleLoan.length-1].loanStatus=true;
         }
@@ -168,5 +163,16 @@ contract BankingAmount is AutomationCompatibleInterface {
         );
         peopleLoan[loanIndex].blockStatus=true;
         blockedPeople[peopleLoan[loanIndex].CustmerAddress]=peopleLoan[loanIndex].loanAmount;
+    }
+
+    function ViewAmount() public view returns(uint256) {
+        return Balance[msg.sender];
+    }
+    function BankTotalAmount() public view returns(uint256){
+        return address(this).balance;
+    }
+
+    function loanAmount() public view returns(uint256) {
+        return loanAmountMapping[msg.sender];
     }
 }
