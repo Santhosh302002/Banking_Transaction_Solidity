@@ -10,9 +10,8 @@ pragma solidity ^0.8.7;
    View_deposited amount
    loan:
 */
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
-import "./PriceConverter.sol";
+
 
 
 error NoBalance();
@@ -22,7 +21,6 @@ error  YouHavePayedLoan();
 error Blocked();
 
 contract BankingAmount is AutomationCompatibleInterface {
-    using PriceConverter for uint256;
     address private immutable i_OwnerAddress;
     uint256 public BankTotalMoney;
     address public contractOwner;
@@ -54,12 +52,9 @@ contract BankingAmount is AutomationCompatibleInterface {
     enum loan {ON,OFF}
     
     loan public status;
-
-    AggregatorV3Interface public PriceFeed;
     
-    constructor(address PriceFeedAddress,uint256 interval) {
+    constructor(uint256 interval) {
         contractOwner = msg.sender;
-        PriceFeed = AggregatorV3Interface(PriceFeedAddress);
         i_interval=interval;
         status=loan.OFF;
         i_OwnerAddress=msg.sender;
@@ -78,12 +73,12 @@ contract BankingAmount is AutomationCompatibleInterface {
     function payment() public payable {
         // payable(address(this)).send(amount);
         people.push(
-            Custmers(msg.sender, msg.value.getConversionRate(PriceFeed))
+            Custmers(msg.sender, msg.value)
         );
         Balance[msg.sender] =
             Balance[msg.sender] +
-            msg.value.getConversionRate(PriceFeed);
-        BankTotalMoney = Balance[msg.sender];
+            msg.value;
+        BankTotalMoney = BankTotalMoney + Balance[msg.sender];
     }
 
 
@@ -131,6 +126,7 @@ contract BankingAmount is AutomationCompatibleInterface {
         loanAmountMapping[msg.sender]=0;
         loanMapping[msg.sender]=true;
         peopleLoan[peopleLoan.length-1].loanStatus=true;
+        BankTotalMoney = BankTotalMoney + loanAmountMapping[msg.sender];
         }
 
     function checkUpkeep(

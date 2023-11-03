@@ -25,7 +25,7 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
     const BankingTransaction = await deploy("BankingAmount", {
         from: deployer,
         log: true,
-        args: [priceFeedAddress, interval]
+        args: [interval]
     }
     )
     if (chainId === 5 && process.env.GOERLI_PRICEFEED_URL) {

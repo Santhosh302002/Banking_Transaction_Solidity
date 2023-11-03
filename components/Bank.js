@@ -13,7 +13,7 @@ export default function Bank() {
     const [Transfer, setTransfer] = useState("");
     const [Transfermoney, setTransfermoney] = useState(0);
     const dispatch = useNotification()
-    const DappAddress = "0x0FE5c4ae204c9134dd6146271d64d22A331da7c2";
+    const DappAddress = "0x095B26705eB8Fe87c01e1BC01CBF8593620CDA75";
 
     const {
         runContractFunction: payment,

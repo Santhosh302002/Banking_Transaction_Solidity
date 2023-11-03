@@ -40,7 +40,8 @@ export default function Loan() {
     const chainId = parseInt(chainIdHex)
     const dispatch = useNotification()
     const [loan, setloan] = useState(0)
-    const DappAddress = "0x0FE5c4ae204c9134dd6146271d64d22A331da7c2";
+    const [replayloan, setreplayloan] = useState(0)
+    const DappAddress = "0x095B26705eB8Fe87c01e1BC01CBF8593620CDA75";
 
     const {
         runContractFunction: LOAN,
@@ -57,12 +58,30 @@ export default function Loan() {
         abi: abi,
         contractAddress: DappAddress,
         functionName: "PayLoan",
+        msgValue: replayloan
+    })
+
+    const {
+        runContractFunction: loanAmount,
+    } = useWeb3Contract({
+        abi: abi,
+        contractAddress: DappAddress,
+        functionName: "loanAmount",
     })
 
     async function updateUIValues() {
         // const web3 = await Moralis.enableWeb3();
         // console.log(money)
         // console.log(paymentMoney)
+        const loanamount = await loanAmount(
+            {
+                onSuccess: handleSuccess,
+                onError: (error) => console.log(error),
+            }
+        )
+        console.log(loanamount)
+        setreplayloan(loanamount.toString())
+
     }
 
     useEffect(() => {
@@ -93,6 +112,10 @@ export default function Loan() {
 
     return (
         <div>
+            <div>
+                Your Loan:
+                {replayloan}
+            </div>
             <div style={divStyle}>
                 <input type="number" style={inputStyle} onChange={(e) => setloan(e.target.value)} />
                 <button style={buttonStyle} onClick={async () => await LOAN(
